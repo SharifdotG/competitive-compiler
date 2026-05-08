@@ -194,7 +194,7 @@ Operands are tagged: `TEMP` (function-local synthetic name), `VAR` (named source
 
 The code generator uses a **stack-machine** discipline — every operand has its own 8-byte stack slot (or 256-byte buffer for string locals, or 8N bytes for int[N] arrays), no register allocator. Operations load into `rax` / `rcx` / `rdx`, compute, and store back.
 
-```
+```js
 Caller's frame
 [rbp + 24]   stack arg 9   (if any)
 [rbp + 16]   stack arg 7   (first stack-passed arg)
@@ -418,7 +418,7 @@ long long __rt_gcd(long long a, long long b) {
 
 The driver chains the passes and exposes per-phase flags. Default action: write asm to a temp file, then invoke `gcc -no-pie out.s runtime.o -o a.out`.
 
-```
+```bash
 cpc [flags] FILE
   --tokens   --ast   --ir   --opt-ir   -S   -o NAME
 ```
@@ -447,7 +447,7 @@ int main() {
 
 **Tokens** (`cpc --tokens fib.cl`, abridged):
 
-```
+```bash
   2:1    INT          int
   2:5    IDENT        fib
   2:8    LPAREN       (
@@ -463,7 +463,7 @@ int main() {
 
 **AST** (`cpc --ast fib.cl`, abridged):
 
-```
+```bash
 Program
   FuncDecl fib -> int
     Param n : int
@@ -501,7 +501,7 @@ Program
 
 **IR** (`cpc --ir fib.cl`):
 
-```
+```js
 function fib(n: int) -> int {
     t0 = n < 2
     jz t0, Lend0
@@ -532,7 +532,7 @@ Note the monomorphization: `read(n)` (where `n: int`) becomes `call __rt_read_in
 
 **Assembly** (`cpc -S fib.cl`, head):
 
-```
+```bash
 .intel_syntax noprefix
 .section .note.GNU-stack,"",@progbits
 .text
@@ -558,7 +558,7 @@ fib:
 
 **Run**:
 
-```
+```bash
 $ ./cpc examples/fib.cl -o fib
 $ echo 15 | ./fib
 610
@@ -588,7 +588,7 @@ int main() {
 }
 ```
 
-```
+```bash
 $ ./cpc examples/sort_search.cl -o ss
 $ echo "5 3 1 4 1 5 4" | ./ss
 sorted:
@@ -620,7 +620,7 @@ int main() {
 
 **Before optimization** (`--ir`), abridged:
 
-```
+```js
 function main() -> int {
     t0 = 2 * 3
     t1 = t0 + 4
@@ -640,7 +640,7 @@ function main() -> int {
 
 **After optimization** (`--opt-ir`):
 
-```
+```bash
 function main() -> int {
     x = 10        ; 2*3+4 folded
     t2 = x        ; x*1 → x
@@ -660,7 +660,7 @@ The `t0 t1 t4 t6` chain that computed the folded values is gone (DCE). At runtim
 
 competitive-lang reports semantic errors with line and column numbers and continues to surface every problem in one pass:
 
-```
+```bash
 $ ./cpc --ir bad.cl
 3:5: error: initializer type int does not match declared type bool
 4:9: error: if condition must be bool, got int
@@ -673,7 +673,7 @@ cpc: 4 semantic error(s)
 
 `make test` runs eight end-to-end programs that compile, link, and execute under a runner that diffs against expected output:
 
-```
+```bash
 PASS builtins
 PASS control_flow
 PASS factorial

@@ -4,4 +4,4 @@
 
 // Walks the (already type-checked) AST and produces TAC IR.
 // Caller owns the returned IRProgram.
-IRProgram* generateIR(Program& ast);
+IRProgram *generateIR(Program &ast);

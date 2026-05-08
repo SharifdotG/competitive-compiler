@@ -5,4 +5,4 @@
 //  - Constant folding + algebraic identities
 //  - Intra-block constant propagation (temp -> const)
 //  - Dead-code elimination of unused temp definitions
-void optimizeIR(IRProgram& p);
+void optimizeIR(IRProgram &p);
