@@ -76,7 +76,7 @@ static const char* tok_name(int t) {
 static int dump_tokens(const char* path) {
     yyin = fopen(path, "r");
     if (!yyin) {
-        fprintf(stderr, "competc: cannot open %s\n", path);
+        fprintf(stderr, "cpc: cannot open %s\n", path);
         return 1;
     }
     int t;
@@ -95,12 +95,12 @@ static int dump_tokens(const char* path) {
 
 static void usage() {
     fprintf(stderr,
-        "usage: competc [flags] FILE\n"
+        "usage: cpc [flags] FILE.cl\n"
         "  --tokens     dump tokens and exit\n"
-        "  --ast        (M2) dump AST and exit\n"
-        "  --ir         (M4) dump IR and exit\n"
-        "  --opt-ir     (M6) dump optimized IR and exit\n"
-        "  -S           (M7) emit assembly\n"
+        "  --ast        dump AST and exit\n"
+        "  --ir         dump IR (three-address code) and exit\n"
+        "  --opt-ir     dump optimized IR and exit\n"
+        "  -S           emit assembly to FILE.s\n"
         "  -o NAME      output executable name (default a.out)\n"
         "  -h, --help   show this message\n"
     );
@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
         else if (a == "-o" && i + 1 < argc) outname = argv[++i];
         else if (a == "-h" || a == "--help") { usage(); return 0; }
         else if (!a.empty() && a[0] == '-') {
-            fprintf(stderr, "competc: unknown flag '%s'\n", a.c_str());
+            fprintf(stderr, "cpc: unknown flag '%s'\n", a.c_str());
             usage();
             return 1;
         }
@@ -138,7 +138,7 @@ int main(int argc, char** argv) {
     // Parse
     yyin = fopen(file, "r");
     if (!yyin) {
-        fprintf(stderr, "competc: cannot open %s\n", file);
+        fprintf(stderr, "cpc: cannot open %s\n", file);
         return 1;
     }
     yylineno = 1;
@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
     fclose(yyin);
 
     if (parseRC != 0 || g_parse_errors > 0 || !g_program) {
-        fprintf(stderr, "competc: %d parse error(s)\n", g_parse_errors);
+        fprintf(stderr, "cpc: %d parse error(s)\n", g_parse_errors);
         return 1;
     }
 
@@ -160,7 +160,7 @@ int main(int argc, char** argv) {
     SymbolTable symtab;
     int semaErrors = runSemanticAnalysis(*g_program, symtab);
     if (semaErrors > 0) {
-        fprintf(stderr, "competc: %d semantic error(s)\n", semaErrors);
+        fprintf(stderr, "cpc: %d semantic error(s)\n", semaErrors);
         return 1;
     }
 
@@ -204,7 +204,7 @@ int main(int argc, char** argv) {
     }
 
     // Full compile: emit asm to a temp file, then invoke gcc to assemble + link.
-    char tmpl[] = "/tmp/competcXXXXXX.s";
+    char tmpl[] = "/tmp/cpcXXXXXX.s";
     int fd = mkstemps(tmpl, 2);
     if (fd < 0) { perror("mkstemps"); delete ir; return 1; }
     FILE* f = fdopen(fd, "w");
@@ -220,7 +220,7 @@ int main(int argc, char** argv) {
     unlink(tmpl);
     delete ir;
     if (rc != 0) {
-        fprintf(stderr, "competc: gcc failed (exit %d)\n", rc);
+        fprintf(stderr, "cpc: gcc failed (exit %d)\n", rc);
         return 1;
     }
     return 0;

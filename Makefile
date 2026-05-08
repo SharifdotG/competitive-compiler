@@ -6,7 +6,7 @@ CFLAGS   := -Wall -g
 SRC := src
 GEN := build/gen
 OBJ := build/obj
-BIN := competc
+BIN := cpc
 
 OBJECTS := \
 	$(OBJ)/main.o          \

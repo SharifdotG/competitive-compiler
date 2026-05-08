@@ -419,7 +419,7 @@ long long __rt_gcd(long long a, long long b) {
 The driver chains the passes and exposes per-phase flags. Default action: write asm to a temp file, then invoke `gcc -no-pie out.s runtime.o -o a.out`.
 
 ```
-competc [flags] FILE
+cpc [flags] FILE
   --tokens   --ast   --ir   --opt-ir   -S   -o NAME
 ```
 
@@ -445,7 +445,7 @@ int main() {
 }
 ```
 
-**Tokens** (`competc --tokens fib.cl`, abridged):
+**Tokens** (`cpc --tokens fib.cl`, abridged):
 
 ```
   2:1    INT          int
@@ -461,7 +461,7 @@ int main() {
   ...
 ```
 
-**AST** (`competc --ast fib.cl`, abridged):
+**AST** (`cpc --ast fib.cl`, abridged):
 
 ```
 Program
@@ -499,7 +499,7 @@ Program
         IntLit 0
 ```
 
-**IR** (`competc --ir fib.cl`):
+**IR** (`cpc --ir fib.cl`):
 
 ```
 function fib(n: int) -> int {
@@ -530,7 +530,7 @@ function main() -> int {
 
 Note the monomorphization: `read(n)` (where `n: int`) becomes `call __rt_read_int`, and `print(fib(n))` becomes `call __rt_print_int`.
 
-**Assembly** (`competc -S fib.cl`, head):
+**Assembly** (`cpc -S fib.cl`, head):
 
 ```
 .intel_syntax noprefix
@@ -559,7 +559,7 @@ fib:
 **Run**:
 
 ```
-$ ./competc examples/fib.cl -o fib
+$ ./cpc examples/fib.cl -o fib
 $ echo 15 | ./fib
 610
 ```
@@ -589,7 +589,7 @@ int main() {
 ```
 
 ```
-$ ./competc examples/sort_search.cl -o ss
+$ ./cpc examples/sort_search.cl -o ss
 $ echo "5 3 1 4 1 5 4" | ./ss
 sorted:
 1
@@ -661,12 +661,12 @@ The `t0 t1 t4 t6` chain that computed the folded values is gone (DCE). At runtim
 competitive-lang reports semantic errors with line and column numbers and continues to surface every problem in one pass:
 
 ```
-$ ./competc --ir bad.cl
+$ ./cpc --ir bad.cl
 3:5: error: initializer type int does not match declared type bool
 4:9: error: if condition must be bool, got int
 5:13: error: unknown function 'unknown'
 6:5: error: return type mismatch: expected int, got string
-competc: 4 semantic error(s)
+cpc: 4 semantic error(s)
 ```
 
 ### 4.5 Test suite

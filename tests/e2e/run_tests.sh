@@ -5,8 +5,8 @@ set -u
 
 cd "$(dirname "$0")/../.."
 
-if [ ! -x ./competc ]; then
-    echo "competc not built; run 'make' first" >&2
+if [ ! -x ./cpc ]; then
+    echo "cpc not built; run 'make' first" >&2
     exit 1
 fi
 
@@ -20,10 +20,10 @@ for prog in tests/e2e/*.cl; do
 
     if [ ! -f "$stdout_file" ]; then continue; fi
 
-    exe="/tmp/competc-test-${name}"
-    if ! ./competc "$prog" -o "$exe" 2> /tmp/competc-test-stderr; then
+    exe="/tmp/cpc-test-${name}"
+    if ! ./cpc "$prog" -o "$exe" 2> /tmp/cpc-test-stderr; then
         printf "FAIL %-25s (compile failed)\n" "$name"
-        cat /tmp/competc-test-stderr >&2
+        cat /tmp/cpc-test-stderr >&2
         fail+=1
         failures+=("$name")
         continue
