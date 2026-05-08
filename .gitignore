@@ -1,0 +1,6 @@
+build/
+competc
+runtime.o
+a.out
+*.s
+*.o
